@@ -1,29 +1,29 @@
 package com.newco.messaging.priority;
 
-import com.newco.messaging.ChannelQueueService;
+import com.newco.messaging.OrderedQueueService;
 import com.newco.messaging.MessageHandler;
 import com.newco.messaging.model.Message;
 
 public class PriorityMessageHandler implements MessageHandler {
 
-  private final ChannelQueueService<Message> channelQueueService;
+  private final OrderedQueueService<Message> orderedQueueService;
 
-  public PriorityMessageHandler(ChannelQueueService channelQueueService) {
-    this.channelQueueService = channelQueueService;
+  public PriorityMessageHandler(OrderedQueueService orderedQueueService) {
+    this.orderedQueueService = orderedQueueService;
   }
 
   @Override
   public void messageReceived(Message message) {
-    channelQueueService.push(message.getSourceChannelId(), message);
+    orderedQueueService.push(message.getSourceChannelId(), message);
   }
 
   @Override
   public void channelCreated(String channelId) {
-    channelQueueService.createChannel(channelId);
+    orderedQueueService.createChannel(channelId);
   }
 
   @Override
   public void channelDestroyed(String channelId) {
-    channelQueueService.deleteChannel(channelId);
+    orderedQueueService.deleteChannel(channelId);
   }
 }

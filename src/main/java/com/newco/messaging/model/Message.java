@@ -33,7 +33,7 @@ public class Message {
     try {
       Thread.sleep(Math.round(Math.random()) % 500);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      throw new RuntimeException("Thread interrupted while preparing message", e);
     }
   }
 }
