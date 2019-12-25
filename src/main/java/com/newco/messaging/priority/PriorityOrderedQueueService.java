@@ -1,7 +1,6 @@
 package com.newco.messaging.priority;
 
 import com.newco.messaging.OrderedQueueService;
-import com.newco.messaging.OrderedMessageQueueProvider;
 import com.newco.messaging.model.Message;
 
 import java.util.Collections;
@@ -9,25 +8,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class PriorityOrderedQueueService implements OrderedQueueService<Message>, OrderedMessageQueueProvider  {
+public class PriorityOrderedQueueService implements OrderedQueueService<Message> {
 
   private static final Map<String, Integer> CHANNEL_TRANSFER_SIZE = new HashMap<String, Integer>() {
     {
-      CHANNEL_TRANSFER_SIZE.put("cn-01", 1);
-      CHANNEL_TRANSFER_SIZE.put("cn-02", 1);
-      CHANNEL_TRANSFER_SIZE.put("cn-03", 3);
-      CHANNEL_TRANSFER_SIZE.put("cn-04", 5);
+      put("cn-01", 1);
+      put("cn-02", 1);
+      put("cn-03", 3);
+      put("cn-04", 5);
     }
   };
 
   private final Map<String, Queue<Message>> channelIdQueueMap;
   private final Map<String, QueueMessageConsumer> channelIdConsumerMap;
   private final ExecutorService messageListenerPool;
-  private final Queue<Message> outboxQueue;
+  private final BlockingQueue<Message> outboxQueue;
 
   public PriorityOrderedQueueService(Integer outQueueCapacity) {
     this.channelIdQueueMap = Collections.synchronizedMap(new HashMap<String, Queue<Message>>());

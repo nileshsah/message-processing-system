@@ -1,11 +1,12 @@
 package com.newco.messaging.model;
 
+import java.nio.charset.Charset;
 import java.util.Random;
 
 public class Message {
   private Long messageId;
   private String sourceChannelId;
-  private Byte[] payload;
+  private byte[] payload;
 
   public Long getMessageId() {
     return messageId;
@@ -23,11 +24,11 @@ public class Message {
     this.sourceChannelId = sourceChannelId;
   }
 
-  public Byte[] getPayload() {
+  public byte[] getPayload() {
     return payload;
   }
 
-  public void setPayload(Byte[] payload) {
+  public void setPayload(byte[] payload) {
     this.payload = payload;
   }
 
@@ -37,5 +38,16 @@ public class Message {
     } catch (InterruptedException e) {
       throw new RuntimeException("Thread interrupted while preparing message", e);
     }
+  }
+
+  @Override
+  public String toString() {
+    return "Message(id="
+        + this.getMessageId()
+        + ", sourceChannelId="
+        + this.getSourceChannelId()
+        + ", payload="
+        + new String(this.getPayload(), Charset.forName("UTF-8"))
+        + ") ";
   }
 }
