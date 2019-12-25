@@ -1,5 +1,7 @@
 package com.newco.messaging.model;
 
+import java.util.Random;
+
 public class Message {
   private Long messageId;
   private String sourceChannelId;
@@ -31,7 +33,7 @@ public class Message {
 
   public void prepare() {
     try {
-      Thread.sleep(Math.round(Math.random()) % 500);
+      Thread.sleep(new Random().nextInt(600));
     } catch (InterruptedException e) {
       throw new RuntimeException("Thread interrupted while preparing message", e);
     }
