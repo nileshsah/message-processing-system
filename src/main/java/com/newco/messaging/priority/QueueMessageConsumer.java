@@ -44,7 +44,7 @@ public class QueueMessageConsumer implements Runnable {
 
   public void stop() {
     isActive.set(false);
-    sharedLock.release(batchConsumptionSize);
+    sharedLock.release(Integer.MAX_VALUE - sharedLock.availablePermits() - 1);
   }
 
   private void doConsume(Integer messagesToConsume) throws InterruptedException {

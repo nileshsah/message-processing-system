@@ -17,7 +17,7 @@ public class RandomMessageProducer implements Runnable {
         Message message = RandomMessageGenerator.generate();
         ChannelListener.getInstance().enqueueMessage(message);
         System.out.println("Message enqueued: " + message);
-      } catch (InterruptedException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }

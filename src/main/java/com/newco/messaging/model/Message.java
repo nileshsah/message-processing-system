@@ -34,7 +34,7 @@ public class Message {
 
   public void prepare() {
     try {
-      Thread.sleep(new Random().nextInt(600));
+      Thread.sleep(new Random().nextInt(500));
     } catch (InterruptedException e) {
       throw new RuntimeException("Thread interrupted while preparing message", e);
     }
