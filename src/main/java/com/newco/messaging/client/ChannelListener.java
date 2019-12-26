@@ -1,8 +1,8 @@
-package com.newco.messaging;
+package com.newco.messaging.client;
 
+import com.newco.messaging.MessageHandler;
 import com.newco.messaging.model.Message;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -41,7 +41,7 @@ public class ChannelListener {
       operationsLock.unlock();
     }
 
-    boolean shouldDeleteChannel = (randomizer.nextInt(1000) % 5 == 0);
+    boolean shouldDeleteChannel = (randomizer.nextInt(1000) % 108 == 0);
     if (shouldDeleteChannel) {
       removeChannel(message.getSourceChannelId());
     }

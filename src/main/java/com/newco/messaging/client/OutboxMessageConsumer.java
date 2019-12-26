@@ -1,8 +1,8 @@
-package com.newco.messaging;
+package com.newco.messaging.client;
 
+import com.newco.messaging.OrderedMessageQueueProvider;
 import com.newco.messaging.model.Message;
 
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 

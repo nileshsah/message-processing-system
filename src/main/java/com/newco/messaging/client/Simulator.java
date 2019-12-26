@@ -1,5 +1,7 @@
-package com.newco.messaging;
+package com.newco.messaging.client;
 
+import com.newco.messaging.MessageHandler;
+import com.newco.messaging.OrderedQueueService;
 import com.newco.messaging.priority.PriorityMessageHandler;
 import com.newco.messaging.priority.PriorityOrderedQueueService;
 
@@ -10,9 +12,9 @@ import java.util.concurrent.Executors;
 public class Simulator {
 
   public static final int OUT_QUEUE_CAPACITY = 100;
-  public static final int INTERNAL_CONSUMER_PER_CHANNEL = 4;
+  public static final int INTERNAL_CONSUMER_PER_CHANNEL = 3;
   public static final int PRODUCER_COUNT = 10;
-  public static final int CONSUMER_COUNT = 7;
+  public static final int CONSUMER_COUNT = 10;
 
   public static void main(String[] args) {
     ExecutorService producerThreadPool = Executors.newCachedThreadPool();
@@ -25,8 +27,12 @@ public class Simulator {
 
     ChannelListener.getInstance().registerMessageHandler(messageHandler);
 
+    for (int count = 0; count < CONSUMER_COUNT; count = count + 1) {
+      consumerThreadPool.submit(new OutboxMessageConsumer(queueService, randomizer.nextInt(300)));
+    }
+
     for (int count = 0; count < PRODUCER_COUNT; count = count + 1) {
-      producerThreadPool.submit(new RandomMessageProducer(randomizer.nextInt(500)));
+      producerThreadPool.submit(new RandomMessageProducer(randomizer.nextInt(600)));
     }
 
     consumerThreadPool.submit(
@@ -44,8 +50,5 @@ public class Simulator {
           }
         });
 
-    for (int count = 0; count < CONSUMER_COUNT; count = count + 1) {
-      consumerThreadPool.submit(new OutboxMessageConsumer(queueService, randomizer.nextInt(500)));
-    }
   }
 }

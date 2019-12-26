@@ -1,4 +1,4 @@
-package com.newco.messaging;
+package com.newco.messaging.client;
 
 import com.newco.messaging.model.Message;
 
