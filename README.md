@@ -2,6 +2,70 @@
 
 The repository implements an in-memory high-throughput priority-based messaging system in Java 8
 
+## Problem Statement
+
+Your team is expected to work on a message processing system, where messages are received on multiple 
+channels and should be processed according to the priority of the channel. You’re working on the 
+module which queues and orders the messages arriving at the system.
+
+Following block diagram shows the overview of message ordering module
+
+![Architecture](images/architecture.png)
+
+![Classes](images/class.png)
+
+### Details and constraints:
+
+- Primary goals of this module is to deliver prepared messages to processing module as soon as 
+possible (to maintain a high Transactions Per Second across the whole system) with the correct 
+channel priority and to queue messages handling unequal in/out rates.
+
+- A MessageHandler instance should be registered to receive messages using 
+`ChannelListener.getInstance().registerMessageHandler(MessageHandler)`​ method. Make sure all the 
+module initialization is done before calling the above method as it will start the message flow. 
+Note that these methods should not be blocking, must return as soon as possible for the channel 
+listener to be functional.
+
+```java
+public interface MessageHandler { 
+	messageReceived(Message m);
+	channelCreated(String channelId); 
+	channelDestroyed(String channelId);
+}
+```
+
+- You are expected to implement the following interface, so the Message Processing module will call 
+getQueue() method to obtain a reference of the out queue. (i.e. OrderingSystem.getQueue() )
+
+```java
+public interface OrderedMessageQueueProvider {
+	java.util.Queue<Message> getQueue();
+}
+```
+
+- Out queue size is limited due to an external reason (Level 2). Because of this, messages received
+ are expected to be queued before they are ordered(Level 1). As shown in the diagram, one queue per 
+ source channel is suggested. Source channel can be identified from the sourceChannelId field of a 
+ Message object. If the out queue is full, message transfer should be paused until there is free 
+ space in the output queue. Source channels can be added or removed while the module is running 
+ (Refer MessageHandler). Note that the channel listener will invoke channelCreated() before 
+ dispatching messages from this channel.
+
+- There is a preparation to be done on each message before processing. Assume this is implemented in 
+the Message class in `prepare()` method. This method can take up to half a second to return. Find the 
+best way to invoke this method at any stage of message flow. Make sure the preparation is done before 
+the processing module dequeue messages.
+
+- To enforce the priority of Queues, different quantities of messages (Transfer size) are taken from 
+each queue at a time to be transferred to the out queue for processing. Assume that the Table-1 has 
+already been loaded to memory from a database with all possible channel ids. Transfer size is an 
+integer in the range 1 – 10 inclusive. Number of channels are expected to grow more than 150.
+
+- `messageReceived()` method will be invoked by threads in an external thread pool. Messages stored 
+in the out queue will be taken by threads from another external thread pool. Ordering module has to 
+be thread safe with minimum blocking possible.
+
+
 ## Classes
 
 The **MessageHandler** exposes the required interfaces to interact with the messaging system - for pushing messages and managing channels.
